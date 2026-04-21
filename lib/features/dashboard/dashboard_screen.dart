@@ -25,9 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               (item) => _GraphEntry(
                 item.day,
                 item.amount,
-                item.day.hashCode.isEven
-                    ? AppPalette.primary
-                    : AppPalette.emerald,
+                item.day.hashCode.isEven ? AppPalette.primary : AppPalette.emerald,
               ),
             )
             .toList(growable: false);
@@ -46,17 +44,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _OverviewPanel(
-                      controller: controller,
-                      rangeLabel: formatDashboardDateRangeLabel(range),
+                    _DashboardHeader(controller: controller),
+                    const SizedBox(height: 12),
+                    ResponsiveWrapGrid(
+                      maxColumns: 2,
+                      children: [
+                        _CompactMetricCard(
+                          title: 'Sales',
+                          value: toPeso(controller.dashboardAnalytics.sales),
+                          hint: 'Within selected range',
+                        ),
+                        _CompactMetricCard(
+                          title: 'Profit',
+                          value: toPeso(controller.dashboardAnalytics.profit),
+                          hint: 'Within selected range',
+                        ),
+                        _CompactMetricCard(
+                          title: 'Transactions',
+                          value: '${controller.dashboardAnalytics.transactionCount}',
+                          hint: 'Completed receipts',
+                        ),
+                        _CompactMetricCard(
+                          title: 'Pending Credits',
+                          value: '${controller.pendingCredits.length}',
+                          hint: 'Unpaid balances',
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     _GraphCard(
                       rangeLabel: formatDashboardDateRangeLabel(range),
                       entries: graphEntries,
                       highestValue: highestValue,
                       trailing: AppDateRangeChip(
                         range: range,
+                        maxLabelWidth: 112,
                         onTap: () async {
                           final selected = await showDashboardDateRangeSheet(
                             context: context,
@@ -71,60 +93,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 14),
-                    ResponsiveWrapGrid(
-                      maxColumns: 2,
-                      children: [
-                        _CompactMetricCard(
-                          title: 'Sales',
-                          value: toPeso(controller.dashboardAnalytics.sales),
-                          chip: 'Range sales',
-                          tone: AppPalette.lilacSoft,
-                        ),
-                        _CompactMetricCard(
-                          title: 'Profit',
-                          value: toPeso(controller.dashboardAnalytics.profit),
-                          chip: 'Range profit',
-                          tone: AppPalette.emeraldSoft,
-                        ),
-                        _CompactMetricCard(
-                          title: 'Transactions',
-                          value:
-                              '${controller.dashboardAnalytics.transactionCount}',
-                          chip: 'Within range',
-                          tone: AppPalette.amberSoft,
-                        ),
-                        _CompactMetricCard(
-                          title: 'Pending Credits',
-                          value: '${controller.pendingCredits.length}',
-                          chip: 'Monitor',
-                          tone: AppPalette.coralSoft,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     _PopularProductsCard(controller: controller),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     ResponsiveWrapGrid(
                       maxColumns: 2,
                       children: [
                         _WatchCard(
                           title: 'Low Stock Watch',
-                          helpMessage:
-                              'Use this list to refill fast movers before they stop appearing in POS.',
-                          tone: AppPalette.amberSoft,
+                          tone: AppPalette.amber,
                           rows: controller.lowStockItems
-                              .map(
-                                  (item) => '${item.name} | ${item.stock} left')
+                              .map((item) => '${item.name} · ${item.stock} left')
                               .toList(growable: false),
                         ),
                         _WatchCard(
                           title: 'Out Of Stock',
-                          helpMessage:
-                              'Items shown here are currently unavailable for checkout until restocked.',
-                          tone: AppPalette.coralSoft,
+                          tone: AppPalette.coral,
                           rows: controller.outOfStockItems
-                              .map((item) => '${item.name} | Refill needed')
+                              .map((item) => '${item.name} · Refill needed')
                               .toList(growable: false),
                         ),
                       ],
@@ -140,70 +126,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class _OverviewPanel extends StatelessWidget {
-  const _OverviewPanel({
-    required this.controller,
-    required this.rangeLabel,
-  });
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader({required this.controller});
 
   final TipidPosController controller;
-  final String rangeLabel;
 
   @override
   Widget build(BuildContext context) {
     final storeName = controller.settings.storeName.trim().isEmpty
         ? 'TipidPOS'
         : controller.settings.storeName;
-    final summary = controller.dashboardAnalytics;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        gradient: AppPalette.heroGradient,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppSectionHeader(
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 560;
+        final button = FilledButton.icon(
+          onPressed: controller.openNewTransaction,
+          icon: const Icon(Icons.point_of_sale_rounded),
+          label: const Text('New Transaction'),
+        );
+
+        if (wide) {
+          return AppSectionHeader(
             title: storeName,
-            subtitle: 'Overview for $rangeLabel',
-            helpMessage:
-                'Tap the sticky New Transaction button anytime to open the checkout screen.',
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              AppInfoChip(
-                label: '${summary.transactionCount} transactions in range',
-                icon: Icons.receipt_long_rounded,
-                color: Colors.white.withValues(alpha: 0.16),
-                foreground: Colors.white,
-              ),
-              AppInfoChip(
-                label:
-                    '${summary.topQuantity} top sold | ${summary.topItem}',
-                icon: Icons.local_fire_department_rounded,
-                color: Colors.white.withValues(alpha: 0.16),
-                foreground: Colors.white,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: controller.openNewTransaction,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: AppPalette.primaryDeep,
-              minimumSize: const Size(0, 50),
+            subtitle: 'Daily store summary',
+            trailing: button,
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppSectionHeader(
+              title: storeName,
+              subtitle: 'Daily store summary',
             ),
-            icon: const Icon(Icons.add_rounded),
-            label: const Text('New Transaction'),
-          ),
-        ],
-      ),
+            const SizedBox(height: 10),
+            button,
+          ],
+        );
+      },
     );
   }
 }
@@ -212,27 +174,31 @@ class _CompactMetricCard extends StatelessWidget {
   const _CompactMetricCard({
     required this.title,
     required this.value,
-    required this.chip,
-    required this.tone,
+    required this.hint,
   });
 
   final String title;
   final String value;
-  final String chip;
-  final Color tone;
+  final String hint;
 
   @override
   Widget build(BuildContext context) {
     return AppSurfaceCard(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Row(
         children: [
-          AppInfoChip(label: chip, color: tone),
-          const SizedBox(height: 14),
-          Text(title, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 6),
-          Text(value, style: Theme.of(context).textTheme.titleLarge),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.bodyMedium),
+                const SizedBox(height: 4),
+                Text(value, style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 2),
+                Text(hint, style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -259,57 +225,54 @@ class _GraphCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppSectionHeader(
-            title: 'Report Graph',
-            subtitle: 'Performance trend for $rangeLabel',
-            helpMessage:
-                'Switch the range dropdown to update the graph using the selected reporting view.',
+            title: 'Sales Trend',
+            subtitle: rangeLabel,
             trailing: trailing,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
           SizedBox(
-            height: 240,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                for (final entry in entries) ...[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            _shortValue(entry.value),
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                width: 26,
-                                height: highestValue <= 0
-                                    ? 12
-                                    : (entry.value / highestValue) * 160,
-                                decoration: BoxDecoration(
-                                  color: entry.color,
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                              ),
+            height: 210,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: entries.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final entry = entries[index];
+                final ratio = highestValue <= 0 ? 0.08 : (entry.value / highestValue);
+                return SizedBox(
+                  width: 44,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        _shortValue(entry.value),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: 20,
+                            height: (ratio * 130).clamp(12, 130),
+                            decoration: BoxDecoration(
+                              color: entry.color,
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            entry.label,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 8),
+                      Text(
+                        entry.label,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
-                ],
-              ],
+                );
+              },
             ),
           ),
         ],
@@ -346,17 +309,14 @@ class _PopularProductsCard extends StatelessWidget {
         children: [
           const AppSectionHeader(
             title: 'Popular Products',
-            subtitle: 'Best performing items in the selected range',
-            helpMessage:
-                'These products are ranked using only the paid transactions inside the selected dashboard date range.',
+            subtitle: 'Top movers in selected range',
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           if (rows.isEmpty)
             const AppEmptyState(
               icon: Icons.inventory_2_outlined,
               title: 'No top sellers yet',
-              message:
-                  'Complete transactions first so the dashboard can rank your products.',
+              message: 'Complete transactions first so top products can be ranked.',
             )
           else
             Column(
@@ -370,7 +330,7 @@ class _PopularProductsCard extends StatelessWidget {
                     price: toPeso(row.item.price),
                     status: row.item.isActive ? 'Active' : 'Inactive',
                   ),
-                  if (row != rows.last) const Divider(height: 22),
+                  if (row != rows.last) const Divider(height: 18),
                 ],
               ],
             ),
@@ -404,38 +364,29 @@ class _ProductRow extends StatelessWidget {
       children: [
         ItemImageThumb(
           imageFuture: controller.imageFileForItem(itemId),
-          size: 52,
-          radius: 18,
+          size: 46,
+          radius: 12,
           icon: Icons.shopping_bag_rounded,
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
           child: Text(
             name,
             style: Theme.of(context).textTheme.titleMedium,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(amount, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 6),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.end,
-              children: [
-                AppInfoChip(
-                  label: price,
-                  color: AppPalette.lilacSoft,
-                ),
-                AppInfoChip(
-                  label: status,
-                  color:
-                      isActive ? AppPalette.emeraldSoft : AppPalette.coralSoft,
-                ),
-              ],
+            Text(amount, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 4),
+            Text(
+              '$price · $status',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isActive ? AppPalette.emerald : AppPalette.coral,
+                  ),
             ),
           ],
         ),
@@ -447,13 +398,11 @@ class _ProductRow extends StatelessWidget {
 class _WatchCard extends StatelessWidget {
   const _WatchCard({
     required this.title,
-    required this.helpMessage,
     required this.tone,
     required this.rows,
   });
 
   final String title;
-  final String helpMessage;
   final Color tone;
   final List<String> rows;
 
@@ -464,25 +413,22 @@ class _WatchCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppSectionHeader(
-            title: title,
-            helpMessage: helpMessage,
-          ),
-          const SizedBox(height: 14),
+          AppSectionHeader(title: title),
+          const SizedBox(height: 10),
           for (final row in displayRows) ...[
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 10,
-                  height: 10,
+                  width: 8,
+                  height: 8,
                   margin: const EdgeInsets.only(top: 6),
                   decoration: BoxDecoration(
                     color: tone,
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     row,
@@ -491,7 +437,7 @@ class _WatchCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (row != displayRows.last) const Divider(height: 22),
+            if (row != displayRows.last) const Divider(height: 16),
           ],
         ],
       ),

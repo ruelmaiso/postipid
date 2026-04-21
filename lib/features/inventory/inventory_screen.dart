@@ -103,7 +103,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     AppSurfaceCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,8 +237,8 @@ class _InventoryCard extends StatelessWidget {
             children: [
               ItemImageThumb(
                 imageFuture: controller.imageFileForItem(item.itemId),
-                size: 78,
-                radius: 22,
+                size: 58,
+                radius: 12,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -292,36 +292,45 @@ class _InventoryCard extends StatelessWidget {
             'Cost ${toPeso(item.cost)}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              OutlinedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ItemEditorScreen(itemId: item.itemId),
-                    ),
-                  );
-                },
-                child: const Text('Edit'),
+              SizedBox(
+                height: 36,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ItemEditorScreen(itemId: item.itemId),
+                      ),
+                    );
+                  },
+                  child: const Text('Edit'),
+                ),
               ),
-              ElevatedButton(
-                onPressed: item.isActive
-                    ? () => _showStockInDialog(context, controller, item)
-                    : null,
-                child: const Text('Stock In'),
+              SizedBox(
+                height: 36,
+                child: ElevatedButton(
+                  onPressed: item.isActive
+                      ? () => _showStockInDialog(context, controller, item)
+                      : null,
+                  child: const Text('Stock In'),
+                ),
               ),
-              FilledButton.tonal(
-                onPressed: () async {
-                  if (item.isActive) {
-                    await controller.deactivateItem(item.itemId);
-                  } else {
-                    await controller.activateItem(item.itemId);
-                  }
-                },
-                child: Text(item.isActive ? 'Deactivate' : 'Activate'),
+              SizedBox(
+                height: 36,
+                child: FilledButton.tonal(
+                  onPressed: () async {
+                    if (item.isActive) {
+                      await controller.deactivateItem(item.itemId);
+                    } else {
+                      await controller.activateItem(item.itemId);
+                    }
+                  },
+                  child: Text(item.isActive ? 'Deactivate' : 'Activate'),
+                ),
               ),
               if (!item.isActive)
                 FilledButton.tonal(

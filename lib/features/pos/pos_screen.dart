@@ -577,82 +577,90 @@ class _CartItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ItemImageThumb(
-            imageFuture: controller.imageFileForItem(item.itemId),
-            size: 70,
-            radius: 20,
-            icon: Icons.shopping_basket_rounded,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.name,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${toPeso(item.price)} each',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 10),
-                Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 340;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ItemImageThumb(
+                imageFuture: controller.imageFileForItem(item.itemId),
+                size: 54,
+                radius: 10,
+                icon: Icons.shopping_basket_rounded,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _QtyButton(
-                      icon: Icons.remove_rounded,
-                      onTap: () => controller.updateCartQuantity(
-                        item.itemId,
-                        item.quantity - 1,
-                      ),
+                    Text(
+                      item.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      maxLines: compact ? 2 : 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      child: Text(
-                        '${item.quantity}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${toPeso(item.price)} each',
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    _QtyButton(
-                      icon: Icons.add_rounded,
-                      onTap: item.quantity >= item.stock
-                          ? null
-                          : () => controller.updateCartQuantity(
-                                item.itemId,
-                                item.quantity + 1,
-                              ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 6,
+                      children: [
+                        _QtyButton(
+                          icon: Icons.remove_rounded,
+                          onTap: () => controller.updateCartQuantity(
+                            item.itemId,
+                            item.quantity - 1,
+                          ),
+                        ),
+                        Text(
+                          '${item.quantity}',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        _QtyButton(
+                          icon: Icons.add_rounded,
+                          onTap: item.quantity >= item.stock
+                              ? null
+                              : () => controller.updateCartQuantity(
+                                    item.itemId,
+                                    item.quantity + 1,
+                                  ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                toPeso(item.price * item.quantity),
-                style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 12),
-              IconButton.filledTonal(
-                onPressed: () => controller.removeFromCart(item.itemId),
-                icon: const Icon(Icons.delete_outline_rounded),
+              const SizedBox(width: 6),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    toPeso(item.price * item.quantity),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  IconButton(
+                    constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => controller.removeFromCart(item.itemId),
+                    icon: const Icon(Icons.delete_outline_rounded),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
