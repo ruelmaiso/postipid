@@ -127,6 +127,10 @@ class _ItemEditorScreenState extends State<ItemEditorScreen> {
                           Expanded(
                             child: OutlinedButton(
                               onPressed: () => _pickImage(ImageSource.camera),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(42),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
                               child: const Text('Camera'),
                             ),
                           ),
@@ -134,6 +138,10 @@ class _ItemEditorScreenState extends State<ItemEditorScreen> {
                           Expanded(
                             child: OutlinedButton(
                               onPressed: () => _pickImage(ImageSource.gallery),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(42),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
                               child: const Text('Gallery'),
                             ),
                           ),
@@ -144,6 +152,10 @@ class _ItemEditorScreenState extends State<ItemEditorScreen> {
                                 _imagePath = null;
                                 _removePhoto = true;
                               }),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(42),
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
                               child: const Text('Remove'),
                             ),
                           ),

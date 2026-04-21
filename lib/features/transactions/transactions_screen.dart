@@ -77,16 +77,24 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AppSectionHeader(
-                            title: 'Transactions',
-                            helpMessage:
-                                'Use the day switcher to move across dates, then filter by payment type to isolate cash or credit receipts.',
-                            trailing: AppDropdownChip<TransactionFilter>(
-                              value: _filter,
-                              items: TransactionFilter.values,
-                              labelBuilder: _filterLabel,
-                              onSelected: (value) => setState(() => _filter = value),
-                            ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AppSectionHeader(
+                                  title: 'Transactions',
+                                  helpMessage:
+                                      'Use the day switcher to move across dates, then filter by payment type to isolate cash or credit receipts.',
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              AppDropdownChip<TransactionFilter>(
+                                value: _filter,
+                                items: TransactionFilter.values,
+                                maxLabelWidth: 88,
+                                labelBuilder: _filterLabel,
+                                onSelected: (value) => setState(() => _filter = value),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 14),
                           _TransactionDayNavigator(
@@ -314,19 +322,22 @@ class _TransactionCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
+          Row(
             children: [
-              OutlinedButton.icon(
-                onPressed: onPreview,
-                icon: const Icon(Icons.visibility_rounded),
-                label: const Text('Preview Receipt'),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onPreview,
+                  icon: const Icon(Icons.visibility_rounded),
+                  label: const Text('Preview'),
+                ),
               ),
-              FilledButton.tonalIcon(
-                onPressed: onPrint,
-                icon: const Icon(Icons.print_rounded),
-                label: const Text('Print Again'),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FilledButton.tonalIcon(
+                  onPressed: onPrint,
+                  icon: const Icon(Icons.print_rounded),
+                  label: const Text('Print'),
+                ),
               ),
             ],
           ),

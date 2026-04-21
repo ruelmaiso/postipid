@@ -83,7 +83,21 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                 'Manage products, stock, images, and barcode-ready items from one clean view.',
                             helpMessage:
                                 'Search or scan to find an item quickly. Use Stock In to refill and Edit to update price or details.',
-                            trailing: addButton,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AppDropdownChip<InventoryFilter>(
+                                  value: _filter,
+                                  items: InventoryFilter.values,
+                                  maxLabelWidth: 84,
+                                  labelBuilder: _filterLabel,
+                                  onSelected: (value) =>
+                                      setState(() => _filter = value),
+                                ),
+                                const SizedBox(width: 8),
+                                addButton,
+                              ],
+                            ),
                           );
                         }
 
@@ -98,6 +112,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                   'Search or scan to find an item quickly. Use Stock In to refill and Edit to update price or details.',
                             ),
                             const SizedBox(height: 12),
+                            AppDropdownChip<InventoryFilter>(
+                              value: _filter,
+                              items: InventoryFilter.values,
+                              maxLabelWidth: 84,
+                              labelBuilder: _filterLabel,
+                              onSelected: (value) =>
+                                  setState(() => _filter = value),
+                            ),
+                            const SizedBox(height: 10),
                             addButton,
                           ],
                         );
@@ -148,13 +171,6 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                     '${controller.outOfStockItems.length} out of stock',
                                 icon: Icons.error_outline_rounded,
                                 color: AppPalette.coralSoft,
-                              ),
-                              AppDropdownChip<InventoryFilter>(
-                                value: _filter,
-                                items: InventoryFilter.values,
-                                labelBuilder: _filterLabel,
-                                onSelected: (value) =>
-                                    setState(() => _filter = value),
                               ),
                             ],
                           ),
@@ -264,7 +280,7 @@ class _InventoryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -287,19 +303,18 @@ class _InventoryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             'Cost ${toPeso(item.cost)}',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          const SizedBox(height: 8),
+          Row(
             children: [
-              SizedBox(
-                height: 36,
-                child: OutlinedButton(
+              Expanded(
+                child: SizedBox(
+                  height: 34,
+                  child: OutlinedButton(
                   onPressed: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -309,43 +324,55 @@ class _InventoryCard extends StatelessWidget {
                   },
                   child: const Text('Edit'),
                 ),
+                ),
               ),
-              SizedBox(
-                height: 36,
-                child: ElevatedButton(
+              const SizedBox(width: 8),
+              Expanded(
+                child: SizedBox(
+                  height: 34,
+                  child: ElevatedButton(
                   onPressed: item.isActive
                       ? () => _showStockInDialog(context, controller, item)
                       : null,
                   child: const Text('Stock In'),
                 ),
-              ),
-              SizedBox(
-                height: 36,
-                child: FilledButton.tonal(
-                  onPressed: () async {
-                    if (item.isActive) {
-                      await controller.deactivateItem(item.itemId);
-                    } else {
-                      await controller.activateItem(item.itemId);
-                    }
-                  },
-                  child: Text(item.isActive ? 'Deactivate' : 'Activate'),
                 ),
               ),
-              if (!item.isActive)
-                FilledButton.tonal(
-                  style: FilledButton.styleFrom(
-                    foregroundColor: AppPalette.coral,
+              const SizedBox(width: 8),
+              Expanded(
+                child: SizedBox(
+                  height: 34,
+                  child: FilledButton.tonal(
+                    onPressed: () async {
+                      if (item.isActive) {
+                        await controller.deactivateItem(item.itemId);
+                      } else {
+                        await controller.activateItem(item.itemId);
+                      }
+                    },
+                    child: Text(item.isActive ? 'Deactivate' : 'Activate'),
                   ),
-                  onPressed: () => _confirmPermanentDelete(
-                    context,
-                    controller,
-                    item,
-                  ),
-                  child: const Text('Delete Permanently'),
                 ),
+              ),
             ],
           ),
+          if (!item.isActive) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.tonal(
+                style: FilledButton.styleFrom(
+                  foregroundColor: AppPalette.coral,
+                ),
+                onPressed: () => _confirmPermanentDelete(
+                  context,
+                  controller,
+                  item,
+                  ),
+                child: const Text('Delete Permanently'),
+              ),
+            ),
+          ],
         ],
       ),
     );

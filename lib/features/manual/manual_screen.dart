@@ -29,6 +29,14 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        title: 'Role-Based Quick Start',
+        icon: Icons.groups_rounded,
+        points: [
+          'Cashier mode: (1) Search/scan item, (2) verify cart and cash, (3) complete payment and print receipt.',
+          'Owner mode: (1) Check inventory alerts, (2) review credits and transactions, (3) export backup before closing.',
+        ],
+      ),
+      _ManualSection(
         title: 'Inventory Management',
         icon: Icons.inventory_2_rounded,
         points: [

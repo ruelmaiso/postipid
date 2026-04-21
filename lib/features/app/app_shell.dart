@@ -146,7 +146,7 @@ class _ShellTopBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Theme.of(context).dividerColor),
+              border: Border.all(color: Colors.transparent),
             ),
             child: Row(
               children: [
@@ -199,11 +199,12 @@ class _AppDrawer extends StatelessWidget {
 
     return Drawer(
       child: SafeArea(
-        child: Padding(
+        child: ListView(
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 22),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               Row(
                 children: [
                   const AppBrandMark(showLabel: true),
@@ -286,7 +287,7 @@ class _AppDrawer extends StatelessWidget {
                   ],
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 18),
               AppSurfaceCard(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -321,7 +322,8 @@ class _AppDrawer extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -394,26 +396,20 @@ class _DrawerQuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 210,
-      child: ActionChip(
-        avatar: Icon(
-          icon,
-          size: 18,
-          color: selected ? Theme.of(context).colorScheme.primary : null,
-        ),
-        label: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(label),
-        ),
-        labelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: selected ? Theme.of(context).colorScheme.primary : null,
-            ),
-        backgroundColor: selected
-            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
-            : null,
-        onPressed: onTap,
+    return ActionChip(
+      avatar: Icon(
+        icon,
+        size: 18,
+        color: selected ? Theme.of(context).colorScheme.primary : null,
       ),
+      label: Text(label),
+      labelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: selected ? Theme.of(context).colorScheme.primary : null,
+          ),
+      backgroundColor: selected
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
+          : null,
+      onPressed: onTap,
     );
   }
 }
