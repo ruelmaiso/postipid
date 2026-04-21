@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="315"
+                android:endColor="#45B7FF"
+                android:centerColor="#5D84FF"
+                android:startColor="#7B6DF6" />
+            <corners android:radius="24dp" />
+        </shape>
+    </item>
+
+    <item
+        android:width="72dp"
+        android:height="72dp"
+        android:drawable="@drawable/ic_receipt_mark"
+        android:gravity="center" />
+</layer-list>
