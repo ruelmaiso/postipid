@@ -47,6 +47,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     _DashboardHeader(controller: controller),
                     const SizedBox(height: 12),
                     ResponsiveWrapGrid(
+                      minColumns: 2,
                       maxColumns: 2,
                       children: [
                         _CompactMetricCard(
@@ -139,21 +140,6 @@ class _DashboardHeader extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final wide = constraints.maxWidth >= 560;
-        final button = FilledButton.icon(
-          onPressed: controller.openNewTransaction,
-          icon: const Icon(Icons.point_of_sale_rounded),
-          label: const Text('New Transaction'),
-        );
-
-        if (wide) {
-          return AppSectionHeader(
-            title: storeName,
-            subtitle: 'Daily store summary',
-            trailing: button,
-          );
-        }
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -162,7 +148,13 @@ class _DashboardHeader extends StatelessWidget {
               subtitle: 'Daily store summary',
             ),
             const SizedBox(height: 10),
-            button,
+            AppInfoChip(
+              label: 'Today: ${toPeso(controller.todayIncome.amount)}',
+              icon: Icons.today_rounded,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppPalette.nightSurfaceAlt
+                  : AppPalette.surfaceTint,
+            ),
           ],
         );
       },
@@ -224,10 +216,21 @@ class _GraphCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppSectionHeader(
-            title: 'Sales Trend',
-            subtitle: rangeLabel,
-            trailing: trailing,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Sales Trend',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+              if (trailing != null) trailing!,
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            rangeLabel,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
           SizedBox(

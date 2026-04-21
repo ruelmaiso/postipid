@@ -91,6 +91,14 @@ class _AppShellState extends State<AppShell> {
                 ],
               ),
             ),
+            floatingActionButton: controller.section == AppSection.dashboard
+                ? FloatingActionButton.extended(
+                    onPressed: controller.openNewTransaction,
+                    icon: const Icon(Icons.add_shopping_cart_rounded),
+                    label: const Text('New Transaction'),
+                  )
+                : null,
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           ),
         );
       },
@@ -243,36 +251,40 @@ class _AppDrawer extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Text(
-                'Quick access',
+                'QUICK ACCESS',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _DrawerQuickAction(
-                    icon: Icons.account_balance_wallet_rounded,
-                    label: 'Credits',
-                    selected: currentSection == AppSection.activity &&
-                        activitySection == ActivitySection.credits,
-                    onTap: () => onOpenActivity(ActivitySection.credits),
-                  ),
-                  _DrawerQuickAction(
-                    icon: Icons.receipt_long_rounded,
-                    label: 'Transactions',
-                    selected: currentSection == AppSection.activity &&
-                        activitySection == ActivitySection.transactions,
-                    onTap: () => onOpenActivity(ActivitySection.transactions),
-                  ),
-                  _DrawerQuickAction(
-                    icon: Icons.bar_chart_rounded,
-                    label: 'Reports',
-                    selected: currentSection == AppSection.activity &&
-                        activitySection == ActivitySection.reports,
-                    onTap: () => onOpenActivity(ActivitySection.reports),
-                  ),
-                ],
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _DrawerQuickAction(
+                      icon: Icons.account_balance_wallet_rounded,
+                      label: 'Credits',
+                      selected: currentSection == AppSection.activity &&
+                          activitySection == ActivitySection.credits,
+                      onTap: () => onOpenActivity(ActivitySection.credits),
+                    ),
+                    const SizedBox(height: 8),
+                    _DrawerQuickAction(
+                      icon: Icons.receipt_long_rounded,
+                      label: 'Transactions',
+                      selected: currentSection == AppSection.activity &&
+                          activitySection == ActivitySection.transactions,
+                      onTap: () => onOpenActivity(ActivitySection.transactions),
+                    ),
+                    const SizedBox(height: 8),
+                    _DrawerQuickAction(
+                      icon: Icons.bar_chart_rounded,
+                      label: 'Reports',
+                      selected: currentSection == AppSection.activity &&
+                          activitySection == ActivitySection.reports,
+                      onTap: () => onOpenActivity(ActivitySection.reports),
+                    ),
+                  ],
+                ),
               ),
               const Spacer(),
               AppSurfaceCard(
@@ -382,17 +394,26 @@ class _DrawerQuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionChip(
-      avatar: Icon(
-        icon,
-        size: 18,
-        color: selected ? Theme.of(context).colorScheme.primary : null,
+    return SizedBox(
+      width: 210,
+      child: ActionChip(
+        avatar: Icon(
+          icon,
+          size: 18,
+          color: selected ? Theme.of(context).colorScheme.primary : null,
+        ),
+        label: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(label),
+        ),
+        labelStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: selected ? Theme.of(context).colorScheme.primary : null,
+            ),
+        backgroundColor: selected
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
+            : null,
+        onPressed: onTap,
       ),
-      label: Text(label),
-      backgroundColor: selected
-          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
-          : null,
-      onPressed: onTap,
     );
   }
 }

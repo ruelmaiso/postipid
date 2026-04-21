@@ -367,7 +367,10 @@ class AppInfoChip extends StatelessWidget {
         (Theme.of(context).brightness == Brightness.dark
             ? AppPalette.nightSurfaceAlt
             : AppPalette.lilacSoft);
-    final textColor = foreground ?? Theme.of(context).colorScheme.onSurface;
+    final textColor = foreground ??
+        (background.computeLuminance() > 0.55
+            ? AppPalette.ink
+            : Theme.of(context).colorScheme.onSurface);
 
     return Container(
       constraints: maxWidth == null ? null : BoxConstraints(maxWidth: maxWidth!),

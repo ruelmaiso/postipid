@@ -233,15 +233,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                             ),
-                            const Divider(height: 28),
-                            _SettingsToggleRow(
-                              label: 'Sound effects',
-                              description:
-                                  'Play local UI feedback during day-to-day actions.',
-                              value: _soundEnabled,
-                              onChanged: (value) =>
-                                  setState(() => _soundEnabled = value),
-                            ),
                             const Divider(height: 18),
                             _SettingsToggleRow(
                               label: 'Low stock notifications',

@@ -20,37 +20,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingData(
       title: 'Welcome to TipidPOS',
       description:
-          'A cleaner checkout, inventory, credits, and reports flow for your store in one mobile workspace.',
+          'Practical retail workspace for sari-sari and small-store daily operations.',
       accent: AppPalette.emerald,
       softAccent: AppPalette.emeraldSoft,
       icon: Icons.storefront_rounded,
       bullets: [
-        'Use the drawer to move through dashboard, POS, inventory, and settings.',
-        'Keep your selling flow simple with search, scan, cart, and receipt print.',
+        'Use the drawer to move across dashboard, POS, inventory, activity, and settings.',
+        'Keep checkout fast: search or scan, confirm cart, then print receipt.',
       ],
     ),
     _OnboardingData(
       title: 'Set Up Your Store First',
       description:
-          'Add store identity, receipt lines, preferred theme, printer, and paper size before the first real transaction.',
+          'Complete store details, receipt text, printer, and paper size before first sale.',
       accent: AppPalette.primary,
       softAccent: AppPalette.lilacSoft,
       icon: Icons.tune_rounded,
       bullets: [
-        'Choose your thermal paper size so previews match the actual printer output.',
-        'Set a printer and low-stock threshold so daily operations stay consistent.',
+        'Match paper size so preview and actual print output stay aligned.',
+        'Set low-stock threshold early to avoid missed refill alerts.',
       ],
     ),
     _OnboardingData(
       title: 'Sell Fast With Search Or Scan',
       description:
-          'Add your real products, keep stock accurate, and use the cleaner POS flow to finish sales without clutter.',
+          'Maintain product accuracy and run a clean, low-friction checkout flow.',
       accent: AppPalette.amber,
       softAccent: AppPalette.amberSoft,
       icon: Icons.qr_code_scanner_rounded,
       bullets: [
-        'Search and scan stay side by side in POS and Inventory for faster handling.',
-        'Use Credit only for unpaid balances, then settle them later in Activity.',
+        'Update stock after deliveries so totals and profit stay reliable.',
+        'Use Credit only for unpaid balances, then settle in Activity.',
       ],
     ),
   ];

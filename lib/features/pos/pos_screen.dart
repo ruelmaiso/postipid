@@ -491,8 +491,6 @@ class _CartPanel extends StatelessWidget {
           const SizedBox(height: 16),
           const _FieldLabel(
             title: 'Customer name',
-            helpMessage:
-                'Use this only when you want the customer name shown on the receipt or when recording credit.',
           ),
           const SizedBox(height: 8),
           TextField(
@@ -504,8 +502,6 @@ class _CartPanel extends StatelessWidget {
           const SizedBox(height: 12),
           const _FieldLabel(
             title: 'Cash received',
-            helpMessage:
-                'Enter the amount tendered by the customer. Leave this empty when recording credit.',
           ),
           const SizedBox(height: 8),
           TextField(
@@ -529,8 +525,6 @@ class _CartPanel extends StatelessWidget {
               children: [
                 const _FieldLabel(
                   title: 'Payment summary',
-                  helpMessage:
-                      'A negative change means the cash entered is still short of the amount due.',
                 ),
                 const SizedBox(height: 10),
                 _SummaryRow(
@@ -708,11 +702,11 @@ class _QtyButton extends StatelessWidget {
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel({
     required this.title,
-    required this.helpMessage,
+    this.helpMessage,
   });
 
   final String title;
-  final String helpMessage;
+  final String? helpMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -722,8 +716,10 @@ class _FieldLabel extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        const SizedBox(width: 8),
-        AppHelpButton(message: helpMessage),
+        if (helpMessage != null && helpMessage!.trim().isNotEmpty) ...[
+          const SizedBox(width: 8),
+          AppHelpButton(message: helpMessage!),
+        ],
       ],
     );
   }
