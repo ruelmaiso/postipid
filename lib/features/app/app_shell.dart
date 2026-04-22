@@ -7,6 +7,7 @@ import '../../core/widgets/app_frame.dart';
 import '../credits/credits_screen.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../inventory/inventory_screen.dart';
+import '../inventory/item_editor_screen.dart';
 import '../pos/pos_screen.dart';
 import '../reports/reports_screen.dart';
 import '../settings/settings_screen.dart';
@@ -54,7 +55,6 @@ class _AppShellState extends State<AppShell> {
             drawer: _AppDrawer(
               currentSection: controller.section,
               activitySection: controller.activitySection,
-              themePreference: controller.settings.themePreference,
               onSelectSection: (section) {
                 controller.setSection(section);
                 Navigator.of(context).pop();
@@ -63,8 +63,6 @@ class _AppShellState extends State<AppShell> {
                 controller.openActivity(section);
                 Navigator.of(context).pop();
               },
-              onThemeChanged: controller.updateThemePreference,
-              storeName: controller.settings.storeName,
             ),
             body: SafeArea(
               child: Column(
@@ -97,6 +95,16 @@ class _AppShellState extends State<AppShell> {
                     icon: const Icon(Icons.add_shopping_cart_rounded),
                     label: const Text('New Transaction'),
                   )
+                : controller.section == AppSection.inventory
+                    ? FloatingActionButton.extended(
+                        onPressed: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const ItemEditorScreen()),
+                          );
+                        },
+                        icon: const Icon(Icons.add_rounded),
+                        label: const Text('Add Item'),
+                      )
                 : null,
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           ),
@@ -178,25 +186,17 @@ class _AppDrawer extends StatelessWidget {
   const _AppDrawer({
     required this.currentSection,
     required this.activitySection,
-    required this.themePreference,
     required this.onSelectSection,
     required this.onOpenActivity,
-    required this.onThemeChanged,
-    required this.storeName,
   });
 
   final AppSection currentSection;
   final ActivitySection activitySection;
-  final AppThemePreference themePreference;
   final ValueChanged<AppSection> onSelectSection;
   final ValueChanged<ActivitySection> onOpenActivity;
-  final ValueChanged<AppThemePreference> onThemeChanged;
-  final String storeName;
 
   @override
   Widget build(BuildContext context) {
-    final label = storeName.trim().isEmpty ? 'TipidPOS' : storeName.trim();
-
     return Drawer(
       child: SafeArea(
         child: ListView(
@@ -205,123 +205,90 @@ class _AppDrawer extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              Row(
-                children: [
-                  const AppBrandMark(showLabel: true),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded),
+                Row(
+                  children: [
+                    const AppBrandMark(showLabel: true),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                _DrawerTile(
+                  selected: currentSection == AppSection.dashboard,
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  onTap: () => onSelectSection(AppSection.dashboard),
+                ),
+                const SizedBox(height: 6),
+                _DrawerTile(
+                  selected: currentSection == AppSection.pos,
+                  icon: Icons.point_of_sale_rounded,
+                  label: 'New Transaction',
+                  onTap: () => onSelectSection(AppSection.pos),
+                ),
+                const SizedBox(height: 6),
+                _DrawerTile(
+                  selected: currentSection == AppSection.inventory,
+                  icon: Icons.inventory_2_rounded,
+                  label: 'Products',
+                  onTap: () => onSelectSection(AppSection.inventory),
+                ),
+                const SizedBox(height: 6),
+                _DrawerTile(
+                  selected: currentSection == AppSection.activity,
+                  icon: Icons.insights_rounded,
+                  label: 'Activity',
+                  onTap: () => onSelectSection(AppSection.activity),
+                ),
+                const SizedBox(height: 6),
+                _DrawerTile(
+                  selected: currentSection == AppSection.settings,
+                  icon: Icons.tune_rounded,
+                  label: 'Settings',
+                  onTap: () => onSelectSection(AppSection.settings),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'QUICK ACCESS',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _DrawerQuickAction(
+                        icon: Icons.account_balance_wallet_rounded,
+                        label: 'Credits',
+                        selected: currentSection == AppSection.activity &&
+                            activitySection == ActivitySection.credits,
+                        onTap: () => onOpenActivity(ActivitySection.credits),
+                      ),
+                      const SizedBox(height: 8),
+                      _DrawerQuickAction(
+                        icon: Icons.receipt_long_rounded,
+                        label: 'Transactions',
+                        selected: currentSection == AppSection.activity &&
+                            activitySection == ActivitySection.transactions,
+                        onTap: () => onOpenActivity(ActivitySection.transactions),
+                      ),
+                      const SizedBox(height: 8),
+                      _DrawerQuickAction(
+                        icon: Icons.bar_chart_rounded,
+                        label: 'Reports',
+                        selected: currentSection == AppSection.activity &&
+                            activitySection == ActivitySection.reports,
+                        onTap: () => onOpenActivity(ActivitySection.reports),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              _DrawerTile(
-                selected: currentSection == AppSection.dashboard,
-                icon: Icons.home_rounded,
-                label: 'Home',
-                onTap: () => onSelectSection(AppSection.dashboard),
-              ),
-              const SizedBox(height: 6),
-              _DrawerTile(
-                selected: currentSection == AppSection.pos,
-                icon: Icons.point_of_sale_rounded,
-                label: 'New Transaction',
-                onTap: () => onSelectSection(AppSection.pos),
-              ),
-              const SizedBox(height: 6),
-              _DrawerTile(
-                selected: currentSection == AppSection.inventory,
-                icon: Icons.inventory_2_rounded,
-                label: 'Products',
-                onTap: () => onSelectSection(AppSection.inventory),
-              ),
-              const SizedBox(height: 6),
-              _DrawerTile(
-                selected: currentSection == AppSection.activity,
-                icon: Icons.insights_rounded,
-                label: 'Activity',
-                onTap: () => onSelectSection(AppSection.activity),
-              ),
-              const SizedBox(height: 6),
-              _DrawerTile(
-                selected: currentSection == AppSection.settings,
-                icon: Icons.tune_rounded,
-                label: 'Settings',
-                onTap: () => onSelectSection(AppSection.settings),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'QUICK ACCESS',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _DrawerQuickAction(
-                      icon: Icons.account_balance_wallet_rounded,
-                      label: 'Credits',
-                      selected: currentSection == AppSection.activity &&
-                          activitySection == ActivitySection.credits,
-                      onTap: () => onOpenActivity(ActivitySection.credits),
-                    ),
-                    const SizedBox(height: 8),
-                    _DrawerQuickAction(
-                      icon: Icons.receipt_long_rounded,
-                      label: 'Transactions',
-                      selected: currentSection == AppSection.activity &&
-                          activitySection == ActivitySection.transactions,
-                      onTap: () => onOpenActivity(ActivitySection.transactions),
-                    ),
-                    const SizedBox(height: 8),
-                    _DrawerQuickAction(
-                      icon: Icons.bar_chart_rounded,
-                      label: 'Reports',
-                      selected: currentSection == AppSection.activity &&
-                          activitySection == ActivitySection.reports,
-                      onTap: () => onOpenActivity(ActivitySection.reports),
-                    ),
-                  ],
                 ),
-              ),
-              const SizedBox(height: 18),
-              AppSurfaceCard(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label, style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Theme',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    SegmentedButton<AppThemePreference>(
-                      showSelectedIcon: false,
-                      segments: const [
-                        ButtonSegment(
-                          value: AppThemePreference.light,
-                          label: Text('Light'),
-                          icon: Icon(Icons.light_mode_rounded),
-                        ),
-                        ButtonSegment(
-                          value: AppThemePreference.dark,
-                          label: Text('Dark'),
-                          icon: Icon(Icons.dark_mode_rounded),
-                        ),
-                      ],
-                      selected: {themePreference},
-                      onSelectionChanged: (selection) =>
-                          onThemeChanged(selection.first),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                const SizedBox(height: 10),
+              ],
             ),
           ],
         ),

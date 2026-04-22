@@ -243,6 +243,11 @@ class _DiscoveryPanel extends StatelessWidget {
               'Use search or scan to add items. Use Credit only for unpaid balances that you will settle later.',
         ),
         const SizedBox(height: 14),
+        Text(
+          'Search or scan item',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
         AppSurfaceCard(
           child: TextField(
             controller: searchController,
@@ -264,11 +269,9 @@ class _DiscoveryPanel extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         if (!hasQuery)
-          const AppEmptyState(
-            icon: Icons.search_rounded,
-            title: 'Search or scan the next item',
-            message:
-                'Use the search field or the Scan button to continue the current sale.',
+          Text(
+            'Type item name or scan barcode to add to cart.',
+            style: Theme.of(context).textTheme.bodyMedium,
           )
         else if (!hasResults)
           const AppEmptyState(
