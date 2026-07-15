@@ -266,7 +266,7 @@ class AppSurfaceCard extends StatelessWidget {
   const AppSurfaceCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(20),
+    this.padding = const EdgeInsets.all(14),
     this.backgroundColor,
   });
 
@@ -279,7 +279,7 @@ class AppSurfaceCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor ?? Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Padding(
@@ -367,14 +367,17 @@ class AppInfoChip extends StatelessWidget {
         (Theme.of(context).brightness == Brightness.dark
             ? AppPalette.nightSurfaceAlt
             : AppPalette.lilacSoft);
-    final textColor = foreground ?? Theme.of(context).colorScheme.onSurface;
+    final textColor = foreground ??
+        (background.computeLuminance() > 0.55
+            ? AppPalette.ink
+            : Theme.of(context).colorScheme.onSurface);
 
     return Container(
       constraints: maxWidth == null ? null : BoxConstraints(maxWidth: maxWidth!),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

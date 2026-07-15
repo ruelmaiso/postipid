@@ -47,7 +47,13 @@ class _BootstrapScreen extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 380),
-              child: AppSurfaceCard(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.transparent),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

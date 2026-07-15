@@ -243,6 +243,11 @@ class _DiscoveryPanel extends StatelessWidget {
               'Use search or scan to add items. Use Credit only for unpaid balances that you will settle later.',
         ),
         const SizedBox(height: 14),
+        Text(
+          'Search or scan item',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 8),
         AppSurfaceCard(
           child: TextField(
             controller: searchController,
@@ -264,11 +269,9 @@ class _DiscoveryPanel extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         if (!hasQuery)
-          const AppEmptyState(
-            icon: Icons.search_rounded,
-            title: 'Search or scan the next item',
-            message:
-                'Use the search field or the Scan button to continue the current sale.',
+          Text(
+            'Type item name or scan barcode to add to cart.',
+            style: Theme.of(context).textTheme.bodyMedium,
           )
         else if (!hasResults)
           const AppEmptyState(
@@ -491,8 +494,6 @@ class _CartPanel extends StatelessWidget {
           const SizedBox(height: 16),
           const _FieldLabel(
             title: 'Customer name',
-            helpMessage:
-                'Use this only when you want the customer name shown on the receipt or when recording credit.',
           ),
           const SizedBox(height: 8),
           TextField(
@@ -504,8 +505,6 @@ class _CartPanel extends StatelessWidget {
           const SizedBox(height: 12),
           const _FieldLabel(
             title: 'Cash received',
-            helpMessage:
-                'Enter the amount tendered by the customer. Leave this empty when recording credit.',
           ),
           const SizedBox(height: 8),
           TextField(
@@ -529,8 +528,6 @@ class _CartPanel extends StatelessWidget {
               children: [
                 const _FieldLabel(
                   title: 'Payment summary',
-                  helpMessage:
-                      'A negative change means the cash entered is still short of the amount due.',
                 ),
                 const SizedBox(height: 10),
                 _SummaryRow(
@@ -577,82 +574,90 @@ class _CartItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ItemImageThumb(
-            imageFuture: controller.imageFileForItem(item.itemId),
-            size: 70,
-            radius: 20,
-            icon: Icons.shopping_basket_rounded,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.name,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${toPeso(item.price)} each',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 10),
-                Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 340;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ItemImageThumb(
+                imageFuture: controller.imageFileForItem(item.itemId),
+                size: 54,
+                radius: 10,
+                icon: Icons.shopping_basket_rounded,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _QtyButton(
-                      icon: Icons.remove_rounded,
-                      onTap: () => controller.updateCartQuantity(
-                        item.itemId,
-                        item.quantity - 1,
-                      ),
+                    Text(
+                      item.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      maxLines: compact ? 2 : 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      child: Text(
-                        '${item.quantity}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${toPeso(item.price)} each',
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    _QtyButton(
-                      icon: Icons.add_rounded,
-                      onTap: item.quantity >= item.stock
-                          ? null
-                          : () => controller.updateCartQuantity(
-                                item.itemId,
-                                item.quantity + 1,
-                              ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 6,
+                      children: [
+                        _QtyButton(
+                          icon: Icons.remove_rounded,
+                          onTap: () => controller.updateCartQuantity(
+                            item.itemId,
+                            item.quantity - 1,
+                          ),
+                        ),
+                        Text(
+                          '${item.quantity}',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        _QtyButton(
+                          icon: Icons.add_rounded,
+                          onTap: item.quantity >= item.stock
+                              ? null
+                              : () => controller.updateCartQuantity(
+                                    item.itemId,
+                                    item.quantity + 1,
+                                  ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                toPeso(item.price * item.quantity),
-                style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: 12),
-              IconButton.filledTonal(
-                onPressed: () => controller.removeFromCart(item.itemId),
-                icon: const Icon(Icons.delete_outline_rounded),
+              const SizedBox(width: 6),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    toPeso(item.price * item.quantity),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  IconButton(
+                    constraints: const BoxConstraints(minHeight: 32, minWidth: 32),
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => controller.removeFromCart(item.itemId),
+                    icon: const Icon(Icons.delete_outline_rounded),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -700,11 +705,11 @@ class _QtyButton extends StatelessWidget {
 class _FieldLabel extends StatelessWidget {
   const _FieldLabel({
     required this.title,
-    required this.helpMessage,
+    this.helpMessage,
   });
 
   final String title;
-  final String helpMessage;
+  final String? helpMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -714,8 +719,10 @@ class _FieldLabel extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        const SizedBox(width: 8),
-        AppHelpButton(message: helpMessage),
+        if (helpMessage != null && helpMessage!.trim().isNotEmpty) ...[
+          const SizedBox(width: 8),
+          AppHelpButton(message: helpMessage!),
+        ],
       ],
     );
   }

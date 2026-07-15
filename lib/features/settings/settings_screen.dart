@@ -129,30 +129,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ),
                             const Divider(height: 28),
-                            _SettingsRow(
-                              label: 'Receipt paper size',
-                              description:
-                                  'Keep preview and real printer output aligned.',
-                              control: AppDropdownChip<ReceiptPaperSize>(
-                                value: _paperSize,
-                                items: ReceiptPaperSize.values,
-                                labelBuilder: _paperLabel,
-                                onSelected: (value) async {
-                                  setState(() => _paperSize = value);
-                                  await context
-                                      .read<TipidPosController>()
-                                      .updateReceiptPaperSize(value);
-                                },
-                              ),
-                            ),
-                            const Divider(height: 28),
-                            _SettingsToggleRow(
-                              label: 'Auto-print after checkout',
-                              description:
-                                  'Send the receipt to the paired printer immediately after payment.',
-                              value: _autoPrint,
-                              onChanged: (value) =>
-                                  setState(() => _autoPrint = value),
+                            Text(
+                              'Theme preference applies instantly once selected.',
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
                         ),
@@ -199,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       const SizedBox(height: 14),
                       _SettingsCard(
-                        title: 'Receipt and Alerts',
+                        title: 'Receipt',
                         helpMessage:
                             'Use short receipt lines for better thermal printing, especially when you choose 58mm paper.',
                         child: Column(
@@ -219,6 +198,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                             const SizedBox(height: 14),
                             _SettingsRow(
+                              label: 'Receipt paper size',
+                              description:
+                                  'Keep preview and real printer output aligned.',
+                              control: AppDropdownChip<ReceiptPaperSize>(
+                                value: _paperSize,
+                                items: ReceiptPaperSize.values,
+                                labelBuilder: _paperLabel,
+                                onSelected: (value) async {
+                                  setState(() => _paperSize = value);
+                                  await context
+                                      .read<TipidPosController>()
+                                      .updateReceiptPaperSize(value);
+                                },
+                              ),
+                            ),
+                            const Divider(height: 18),
+                            _SettingsToggleRow(
+                              label: 'Auto-print after checkout',
+                              description:
+                                  'Send the receipt to the paired printer immediately after payment.',
+                              value: _autoPrint,
+                              onChanged: (value) =>
+                                  setState(() => _autoPrint = value),
+                            ),
+                            const Divider(height: 18),
+                            _SettingsRow(
                               label: 'Low stock threshold',
                               description:
                                   'Products at or below this quantity appear in monitoring.',
@@ -232,24 +237,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                               ),
-                            ),
-                            const Divider(height: 28),
-                            _SettingsToggleRow(
-                              label: 'Sound effects',
-                              description:
-                                  'Play local UI feedback during day-to-day actions.',
-                              value: _soundEnabled,
-                              onChanged: (value) =>
-                                  setState(() => _soundEnabled = value),
-                            ),
-                            const Divider(height: 18),
-                            _SettingsToggleRow(
-                              label: 'Low stock notifications',
-                              description:
-                                  'Show attention cues when items fall below the threshold.',
-                              value: _notificationsEnabled,
-                              onChanged: (value) =>
-                                  setState(() => _notificationsEnabled = value),
                             ),
                           ],
                         ),
@@ -286,32 +273,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(height: 14),
-                            ResponsiveWrapGrid(
-                              minColumns: 1,
-                              maxColumns: 2,
+                            Wrap(
                               spacing: 10,
                               runSpacing: 10,
                               children: [
-                                OutlinedButton(
-                                  onPressed:
-                                      _loadingPrinters ? null : _refreshPrinters,
-                                  child: Text(_loadingPrinters
-                                      ? 'Refreshing...'
-                                      : 'Refresh'),
+                                IconButton.filledTonal(
+                                  onPressed: _loadingPrinters ? null : _refreshPrinters,
+                                  icon: const Icon(Icons.refresh_rounded),
                                 ),
-                                OutlinedButton(
+                                FilledButton.icon(
                                   onPressed: _showPrinterPicker,
-                                  child: const Text('Choose Printer'),
+                                  icon: const Icon(Icons.bluetooth_searching_rounded),
+                                  label: const Text('Choose Printer'),
                                 ),
-                                OutlinedButton(
-                                  onPressed: () =>
-                                      controller.clearPrinterSelection(),
-                                  child: const Text('Clear Selection'),
-                                ),
-                                FilledButton.tonal(
-                                  onPressed: () =>
-                                      controller.printReceipt(sampleReceipt),
-                                  child: const Text('Print Sample'),
+                                IconButton.filledTonal(
+                                  onPressed: () => controller.clearPrinterSelection(),
+                                  icon: const Icon(Icons.close_rounded),
                                 ),
                               ],
                             ),
@@ -356,20 +333,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         helpMessage:
                             'Export a backup before big changes or before publishing to another device. Clear data only when you are certain.',
                         child: ResponsiveWrapGrid(
-                          minColumns: 1,
+                          minColumns: 2,
                           maxColumns: 2,
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            OutlinedButton(
+                            _IconActionButton(
+                              icon: Icons.backup_rounded,
+                              label: 'Export',
                               onPressed: _exportBackup,
-                              child: const Text('Export Backup'),
                             ),
-                            OutlinedButton(
+                            _IconActionButton(
+                              icon: Icons.file_open_rounded,
+                              label: 'Import',
                               onPressed: _importBackup,
-                              child: const Text('Import Backup'),
                             ),
-                            OutlinedButton(
+                            _IconActionButton(
+                              icon: Icons.menu_book_rounded,
+                              label: 'Manual',
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
@@ -377,11 +358,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 );
                               },
-                              child: const Text('Open Manual'),
                             ),
-                            FilledButton.tonal(
+                            _IconActionButton(
+                              icon: Icons.delete_sweep_rounded,
+                              label: 'Clear',
                               onPressed: _confirmClearData,
-                              child: const Text('Clear All Data'),
                             ),
                           ],
                         ),
@@ -521,6 +502,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     await showModalBottomSheet<void>(
       context: context,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
       builder: (context) {
         return ListView(
           shrinkWrap: true,
@@ -742,6 +727,30 @@ class _SettingsToggleRow extends StatelessWidget {
       control: Switch.adaptive(
         value: value,
         onChanged: onChanged,
+      ),
+    );
+  }
+}
+
+class _IconActionButton extends StatelessWidget {
+  const _IconActionButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 18),
+      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(44),
       ),
     );
   }

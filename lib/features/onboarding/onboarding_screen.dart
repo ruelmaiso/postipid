@@ -20,37 +20,61 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingData(
       title: 'Welcome to TipidPOS',
       description:
-          'A cleaner checkout, inventory, credits, and reports flow for your store in one mobile workspace.',
+          'Practical retail workspace for sari-sari and small-store daily operations.',
       accent: AppPalette.emerald,
       softAccent: AppPalette.emeraldSoft,
       icon: Icons.storefront_rounded,
       bullets: [
-        'Use the drawer to move through dashboard, POS, inventory, and settings.',
-        'Keep your selling flow simple with search, scan, cart, and receipt print.',
+        'Use the drawer to move across dashboard, POS, inventory, activity, and settings.',
+        'Keep checkout fast: search or scan, confirm cart, then print receipt.',
       ],
     ),
     _OnboardingData(
       title: 'Set Up Your Store First',
       description:
-          'Add store identity, receipt lines, preferred theme, printer, and paper size before the first real transaction.',
+          'Complete store details, receipt text, printer, and paper size before first sale.',
       accent: AppPalette.primary,
       softAccent: AppPalette.lilacSoft,
       icon: Icons.tune_rounded,
       bullets: [
-        'Choose your thermal paper size so previews match the actual printer output.',
-        'Set a printer and low-stock threshold so daily operations stay consistent.',
+        'Match paper size so preview and actual print output stay aligned.',
+        'Set low-stock threshold early to avoid missed refill alerts.',
       ],
     ),
     _OnboardingData(
       title: 'Sell Fast With Search Or Scan',
       description:
-          'Add your real products, keep stock accurate, and use the cleaner POS flow to finish sales without clutter.',
+          'Maintain product accuracy and run a clean, low-friction checkout flow.',
       accent: AppPalette.amber,
       softAccent: AppPalette.amberSoft,
       icon: Icons.qr_code_scanner_rounded,
       bullets: [
-        'Search and scan stay side by side in POS and Inventory for faster handling.',
-        'Use Credit only for unpaid balances, then settle them later in Activity.',
+        'Update stock after deliveries so totals and profit stay reliable.',
+        'Use Credit only for unpaid balances, then settle in Activity.',
+      ],
+    ),
+    _OnboardingData(
+      title: 'Cashier Mode: 3-Step Quick Start',
+      description: 'Use this flow for fast peak-hour checkout.',
+      accent: AppPalette.ocean,
+      softAccent: AppPalette.oceanSoft,
+      icon: Icons.point_of_sale_rounded,
+      bullets: [
+        '1) Search or scan item, then confirm quantity.',
+        '2) Enter cash and verify change before payment.',
+        '3) Tap Print after checkout when customer asks.',
+      ],
+    ),
+    _OnboardingData(
+      title: 'Owner Mode: End-Of-Day Routine',
+      description: 'Use this mini-checklist before closing the store.',
+      accent: AppPalette.coral,
+      softAccent: AppPalette.coralSoft,
+      icon: Icons.fact_check_rounded,
+      bullets: [
+        'Review credits and settle fully paid balances.',
+        'Check low-stock and out-of-stock items for restock.',
+        'Export backup after major edits or before app updates.',
       ],
     ),
   ];
@@ -172,70 +196,25 @@ class _OnboardingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return AppSurfaceCard(
-      padding: const EdgeInsets.all(24),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: dark ? AppPalette.nightSurfaceAlt : data.softAccent,
-                borderRadius: BorderRadius.circular(34),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 26,
-                    right: 28,
-                    child: Container(
-                      width: 66,
-                      height: 66,
-                      decoration: BoxDecoration(
-                        color: data.accent.withValues(alpha: 0.16),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 30,
-                    bottom: 26,
-                    child: Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: data.accent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Container(
-                      width: 132,
-                      height: 132,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(38),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x14000000),
-                            blurRadius: 26,
-                            offset: Offset(0, 16),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        data.icon,
-                        size: 60,
-                        color: data.accent,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          Container(
+            width: 62,
+            height: 62,
+            decoration: BoxDecoration(
+              color: dark ? AppPalette.nightSurfaceAlt : data.softAccent,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              data.icon,
+              size: 30,
+              color: data.accent,
             ),
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 18),
           Text(
             data.title,
             style: Theme.of(context).textTheme.headlineSmall,
@@ -251,8 +230,8 @@ class _OnboardingCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 10,
-                  height: 10,
+                  width: 8,
+                  height: 8,
                   margin: const EdgeInsets.only(top: 6),
                   decoration: BoxDecoration(
                     color: data.accent,
@@ -263,7 +242,7 @@ class _OnboardingCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     bullet,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               ],

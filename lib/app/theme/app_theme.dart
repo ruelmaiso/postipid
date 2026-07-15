@@ -139,13 +139,13 @@ class AppTheme {
         backgroundColor: isDark ? AppPalette.nightSurface : Colors.white,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: isDark ? AppPalette.nightSurfaceAlt : AppPalette.ink,
         contentTextStyle: textTheme.bodyLarge?.copyWith(color: Colors.white),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
@@ -181,7 +181,7 @@ class AppTheme {
           ),
           side: WidgetStatePropertyAll(BorderSide(color: borderColor)),
           shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
           textStyle: WidgetStatePropertyAll(
             GoogleFonts.manrope(fontSize: 13.5, fontWeight: FontWeight.w800),
@@ -197,13 +197,13 @@ class AppTheme {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: colorScheme.onSurface,
           backgroundColor: inputFill,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
       cardTheme: CardThemeData(
@@ -221,15 +221,15 @@ class AppTheme {
         hintStyle: textTheme.bodyMedium,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
         ),
       ),
@@ -239,7 +239,7 @@ class AppTheme {
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(54),
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: GoogleFonts.manrope(fontSize: 14.5, fontWeight: FontWeight.w800),
         ),
       ),
@@ -248,7 +248,7 @@ class AppTheme {
           backgroundColor: colorScheme.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w800),
         ),
       ),
@@ -258,7 +258,7 @@ class AppTheme {
           side: BorderSide(color: borderColor),
           foregroundColor: colorScheme.onSurface,
           backgroundColor: inputFill,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           textStyle: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w800),
         ),
       ),

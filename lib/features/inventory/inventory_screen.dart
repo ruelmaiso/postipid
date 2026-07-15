@@ -63,47 +63,36 @@ class _InventoryScreenState extends State<InventoryScreen> {
                   children: [
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        final wide = isMediumLayout(constraints.maxWidth);
-                        final addButton = FilledButton.icon(
-                          onPressed: () async {
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ItemEditorScreen(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.add_rounded),
-                          label: const Text('Add Item'),
-                        );
-
-                        if (wide) {
-                          return AppSectionHeader(
-                            title: 'Inventory',
-                            subtitle:
-                                'Manage products, stock, images, and barcode-ready items from one clean view.',
-                            helpMessage:
-                                'Search or scan to find an item quickly. Use Stock In to refill and Edit to update price or details.',
-                            trailing: addButton,
-                          );
-                        }
-
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const AppSectionHeader(
-                              title: 'Inventory',
-                              subtitle:
-                                  'Manage products, stock, images, and barcode-ready items from one clean view.',
-                              helpMessage:
-                                  'Search or scan to find an item quickly. Use Stock In to refill and Edit to update price or details.',
+                            Row(
+                              children: [
+                                const Expanded(
+                                  child: AppSectionHeader(
+                                    title: 'Inventory',
+                                    subtitle:
+                                        'Manage products, stock, images, and barcode-ready items from one clean view.',
+                                    helpMessage:
+                                        'Search or scan to find an item quickly. Use Stock In to refill and Edit to update price or details.',
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                AppDropdownChip<InventoryFilter>(
+                                  value: _filter,
+                                  items: InventoryFilter.values,
+                                  maxLabelWidth: 84,
+                                  labelBuilder: _filterLabel,
+                                  onSelected: (value) =>
+                                      setState(() => _filter = value),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 12),
-                            addButton,
                           ],
                         );
                       },
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
                     AppSurfaceCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,33 +117,29 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             onChanged: (_) => setState(() {}),
                           ),
                           const SizedBox(height: 14),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
+                          Row(
                             children: [
-                              AppInfoChip(
-                                label:
-                                    '${controller.allItems.length} total items',
-                                icon: Icons.inventory_2_rounded,
+                              Expanded(
+                                child: AppInfoChip(
+                                  label: '${controller.allItems.length} items',
+                                  icon: Icons.inventory_2_rounded,
+                                ),
                               ),
-                              AppInfoChip(
-                                label:
-                                    '${controller.lowStockItems.length} low stock',
-                                icon: Icons.warning_amber_rounded,
-                                color: AppPalette.amberSoft,
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: AppInfoChip(
+                                  label: '${controller.lowStockItems.length} low',
+                                  icon: Icons.warning_amber_rounded,
+                                  color: AppPalette.amberSoft,
+                                ),
                               ),
-                              AppInfoChip(
-                                label:
-                                    '${controller.outOfStockItems.length} out of stock',
-                                icon: Icons.error_outline_rounded,
-                                color: AppPalette.coralSoft,
-                              ),
-                              AppDropdownChip<InventoryFilter>(
-                                value: _filter,
-                                items: InventoryFilter.values,
-                                labelBuilder: _filterLabel,
-                                onSelected: (value) =>
-                                    setState(() => _filter = value),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: AppInfoChip(
+                                  label: '${controller.outOfStockItems.length} out',
+                                  icon: Icons.error_outline_rounded,
+                                  color: AppPalette.coralSoft,
+                                ),
                               ),
                             ],
                           ),
@@ -237,26 +222,38 @@ class _InventoryCard extends StatelessWidget {
             children: [
               ItemImageThumb(
                 imageFuture: controller.imageFileForItem(item.itemId),
-                size: 78,
-                radius: 22,
+                size: 58,
+                radius: 12,
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.name,
-                      style: Theme.of(context).textTheme.titleLarge,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: Theme.of(context).textTheme.titleLarge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          toPeso(item.price),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      item.category,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    const SizedBox(height: 2),
+                    Text(item.category, style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: 4),
                     Text(
                       item.barcode.isEmpty ? 'No barcode saved' : item.barcode,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -264,7 +261,7 @@ class _InventoryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -281,62 +278,93 @@ class _InventoryCard extends StatelessWidget {
                 label: item.status,
                 color: statusColor,
               ),
-              AppInfoChip(
-                label: toPeso(item.price),
-                color: AppPalette.oceanSoft,
-              ),
+              AppInfoChip(label: 'Cost ${toPeso(item.cost)}', color: AppPalette.oceanSoft),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Cost ${toPeso(item.cost)}',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
+          const SizedBox(height: 8),
+          Row(
             children: [
-              OutlinedButton(
-                onPressed: () async {
-                  await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ItemEditorScreen(itemId: item.itemId),
+              Expanded(
+                child: SizedBox(
+                  height: 36,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ItemEditorScreen(itemId: item.itemId),
+                        ),
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 12),
                     ),
-                  );
-                },
-                child: const Text('Edit'),
-              ),
-              ElevatedButton(
-                onPressed: item.isActive
-                    ? () => _showStockInDialog(context, controller, item)
-                    : null,
-                child: const Text('Stock In'),
-              ),
-              FilledButton.tonal(
-                onPressed: () async {
-                  if (item.isActive) {
-                    await controller.deactivateItem(item.itemId);
-                  } else {
-                    await controller.activateItem(item.itemId);
-                  }
-                },
-                child: Text(item.isActive ? 'Deactivate' : 'Activate'),
-              ),
-              if (!item.isActive)
-                FilledButton.tonal(
-                  style: FilledButton.styleFrom(
-                    foregroundColor: AppPalette.coral,
+                    child: const Text('Edit'),
                   ),
-                  onPressed: () => _confirmPermanentDelete(
-                    context,
-                    controller,
-                    item,
-                  ),
-                  child: const Text('Delete Permanently'),
                 ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SizedBox(
+                  height: 36,
+                  child: ElevatedButton(
+                    onPressed: item.isActive
+                        ? () => _showStockInDialog(context, controller, item)
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 12),
+                    ),
+                    child: const Text(
+                      'Stock In',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: SizedBox(
+                  height: 36,
+                  child: FilledButton.tonal(
+                    onPressed: () async {
+                      if (item.isActive) {
+                        await controller.deactivateItem(item.itemId);
+                      } else {
+                        await controller.activateItem(item.itemId);
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 12),
+                    ),
+                    child: Text(
+                      item.isActive ? 'Deactivate' : 'Activate',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
+          if (!item.isActive) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.tonal(
+                style: FilledButton.styleFrom(
+                  foregroundColor: AppPalette.coral,
+                ),
+                onPressed: () => _confirmPermanentDelete(
+                  context,
+                  controller,
+                  item,
+                ),
+                child: const Text('Delete Permanently'),
+              ),
+            ),
+          ],
         ],
       ),
     );

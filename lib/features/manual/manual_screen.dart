@@ -29,6 +29,14 @@ class ManualScreen extends StatelessWidget {
         ],
       ),
       _ManualSection(
+        title: 'Role-Based Quick Start',
+        icon: Icons.groups_rounded,
+        points: [
+          'Cashier mode: (1) Search/scan item, (2) verify cart and cash, (3) complete payment and print receipt.',
+          'Owner mode: (1) Check inventory alerts, (2) review credits and transactions, (3) export backup before closing.',
+        ],
+      ),
+      _ManualSection(
         title: 'Inventory Management',
         icon: Icons.inventory_2_rounded,
         points: [
@@ -75,35 +83,24 @@ class ManualScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: AppPalette.heroGradient,
-                      borderRadius: BorderRadius.circular(32),
-                    ),
+                  AppSurfaceCard(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const AppBrandMark(size: 64),
-                        const SizedBox(width: 16),
+                        const AppBrandMark(size: 56),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'TipidPOS Manual',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
-                                    ?.copyWith(color: Colors.white),
+                                style: Theme.of(context).textTheme.headlineSmall,
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 6),
                               Text(
-                                'Use this page as your clean launch checklist for selling, inventory, receipts, printer setup, and backup.',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(color: Colors.white70),
+                                'Step-by-step operating guide for onboarding, checkout, inventory, activity, and backups.',
+                                style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ],
                           ),
